@@ -20,7 +20,7 @@ page-home {
         color: #ffffff;
     }
     textarea{
-        height:200px;	
+        height:400px;	
     }
         .sidenav {
             height: 100%;
@@ -50,8 +50,12 @@ page-home {
         }
         .main {
             margin-left:250px;
+        }        
+        .hoverbutton:hover {
+            cursor: pointer;
         }
-        .dash:hover {
+        .hoveritem:hover {
+            background:#16bd00;
             cursor: pointer;
         }
         .modal {
