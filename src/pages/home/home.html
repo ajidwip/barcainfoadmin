@@ -1,7 +1,7 @@
 <ion-header class="header">
   <div id="header-navbar" class="header-navbar">
     <div style="text-align:right;height:0px;">
-      <button style="top:5px;right:5px;" ion-button clear color="light" (click)="doRefreshNews()">
+      <button style="top:5px;right:5px;" ion-button clear color="light" (click)="doRefresh()">
         <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
       </button>
     </div>
@@ -116,7 +116,7 @@
         </div>
       </ion-card>
     </div>
-    <div id="myModal" class="modal">
+    <div id="myNews" class="modal">
       <div class="modal-content">
         <div>
           <b>ADD NEWS</b>
@@ -135,11 +135,110 @@
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
             <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
           </ion-item>
-        <ion-buttons end padding>
-          <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
-        </ion-buttons>
-      </form>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
+          </ion-buttons>
+        </form>
       </div>
     </div>
+
+
+    <div id="photos" style="display: none;">
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Gallery Aktif ({{TotalGalleryAllActive}})</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let galleryall of GalleryAllActive" (click)="doUpdateStatusGalleryActive(galleryall)">
+                <ion-avatar item-start>
+                  <img src="{{galleryall.image_url_thumb}}" alt="">
+                </ion-avatar>
+                <div no-padding>
+                  <h2>Title : {{galleryall.title}}</h2>
+                  <ion-note>Status :
+                    <b>{{galleryall.status}}</b>
+                  </ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Date : {{galleryall.date}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Semua Gallery</div>
+              <div style="text-align:center;font-size:50px;">{{TotalGalleryAll}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Gallery Ditambahkan Bulan Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalGalleryMonth}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Gallery Ditambahkan Hari Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalGalleryDay}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Tambah Gallery</div>
+              <div style="text-align:center;font-size:50px;">
+                <ion-icon class="hoverbutton" name="md-add" (click)="doAddGallery()"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Gallery Tidak Aktif ({{TotalGalleryAllNotActive}})</h5>
+          </div>
+          <ion-content style="padding-bottom:489px;">
+            <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let galleryday of GalleryAllNotActive" (click)="doUpdateStatusGalleryNotActive(galleryday)">
+              <ion-avatar item-start>
+                <img src="{{galleryday.image_url_thumb}}" alt="">
+              </ion-avatar>
+              <div no-padding>
+                <h2>Title : {{galleryday.title}}</h2>
+                <ion-note>Status :
+                  <b>{{galleryday.status}}</b>
+                </ion-note>
+              </div>
+              <ion-note style="margin-right:50px;" item-end>{{galleryday.date}}</ion-note>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
+    </div>
+    <div id="myGallery" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>ADD GALLERY</b>
+          <span class="closeModal" (click)="doCloseAddGallery()">&times;</span>
+        </div>
+        <form [formGroup]="myForm">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
+            <ion-input formControlName="title" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Description</ion-label>
+            <ion-textarea formControlName="description" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
+            <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
+
+
   </div>
 </ion-content>
