@@ -122,7 +122,7 @@
           <b>ADD NEWS</b>
           <span class="closeModal" (click)="doCloseAddNews()">&times;</span>
         </div>
-        <form [formGroup]="myForm">
+        <form [formGroup]="myFormNews">
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
             <ion-input formControlName="title" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
@@ -136,7 +136,7 @@
             <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
           </ion-item>
           <ion-buttons end padding>
-            <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
+            <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myFormNews.valid">Save</button>
           </ion-buttons>
         </form>
       </div>
@@ -186,7 +186,7 @@
             <ion-col col-5.9 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
               <div style="text-align:center;">Tambah Gallery</div>
               <div style="text-align:center;font-size:50px;">
-                <ion-icon class="hoverbutton" name="md-add" (click)="doAddGallery()"></ion-icon>
+                <ion-icon class="hovedoAddGalleryrbutton" name="md-add" (click)="doAddGallery()"></ion-icon>
               </div>
             </ion-col>
           </ion-row>
@@ -219,21 +219,55 @@
           <b>ADD GALLERY</b>
           <span class="closeModal" (click)="doCloseAddGallery()">&times;</span>
         </div>
-        <form [formGroup]="myForm">
+        <form [formGroup]="myFormGallery">
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
             <ion-input formControlName="title" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Description</ion-label>
-            <ion-textarea formControlName="description" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-textarea>
-          </ion-item>
-          <ion-item>
-            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url Thumb</ion-label>
             <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
           </ion-item>
+          <ion-card style="margin-left:18px;width:98%;">
+            <ion-item>
+              <ion-label color="primary" stacked>Add Url Photos</ion-label>
+              <ion-input formControlName="url" type="text" placeholder="Input Url"></ion-input>
+              <button item-end ion-button clear color="greenlake" (click)="doAddphotos()">
+                <ion-icon name="md-add" style="font-size:20px;"></ion-icon>
+              </button>
+            </ion-item>
+          </ion-card>
+          <ion-card style="margin-left:18px;width:98%;">
+            <div style="border-top:1px solid;border-color:#dedede;background:#ffffff;">
+              <div padding style="font-weight:bold;">
+                List Photos
+              </div>
+              <ion-grid>
+                <ion-row>
+                  <ion-col col-12 style="border-top:1px solid;border-color:#dedede;">
+                    <ion-row>
+                      <ion-col col-4>Title</ion-col>
+                      <ion-col col-5>Image Url</ion-col>
+                      <ion-col col-2>Date</ion-col>
+                      <ion-col col-1>Delete</ion-col>
+                    </ion-row>
+                  </ion-col>
+                  <ion-col *ngFor="let foto of photos" col-12 style="border-top:1px solid;border-color:#dedede;">
+                    <ion-row>
+                      <ion-col col-4 style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{foto.title}}</ion-col>
+                      <ion-col col-5 style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{foto.image_url}}</ion-col>
+                      <ion-col col-2 style="border-right:1px solid;border-top:0px;border-left:0px;border-color:#dedede">{{foto.date}}</ion-col>
+                      <ion-col col-1 style="color:white;background:#ac0000;text-align:center;" (click)="doDeletePutawayList(putemp)">
+                        <ion-icon name="md-close"></ion-icon>
+                      </ion-col>
+                    </ion-row>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </div>
+          </ion-card>
           <ion-buttons end padding>
-            <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
+            <button ion-button color="bluedark" (click)="doSaveGallery();" [disabled]="!myFormGallery.valid">Save</button>
           </ion-buttons>
         </form>
       </div>

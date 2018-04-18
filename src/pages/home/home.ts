@@ -11,7 +11,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   templateUrl: 'home.html'
 })
 export class HomePage {
-  myForm: FormGroup;
+  myFormNews: FormGroup;
+  myFormGallery: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -33,6 +34,7 @@ export class HomePage {
   public TotalGalleryMonth: any;
   public GalleryDay = [];
   public TotalGalleryDay: any;
+  public photos = [];
 
   public nextno: any;
   public uuid = '';
@@ -43,10 +45,15 @@ export class HomePage {
     public alertCtrl: AlertController,
     public fb: FormBuilder,
     public actionSheetCtrl: ActionSheetController) {
-    this.myForm = fb.group({
+    this.myFormNews = fb.group({
       title: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])],
       imageurl: ['', Validators.compose([Validators.required])],
+    })
+    this.myFormGallery = fb.group({
+      title: ['', Validators.compose([Validators.required])],
+      imageurl: ['', Validators.compose([Validators.required])],
+      url: [''],
     })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
@@ -60,6 +67,7 @@ export class HomePage {
     this.doGetGalleryAll();
     this.doGetGalleryMonth();
     this.doGetGalleryDay();
+    this.doRefreshPhotos();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
@@ -73,6 +81,9 @@ export class HomePage {
     document.getElementById('fanspage').style.display = 'none';*/
   }
   doPhotos() {
+    let uuid = UUID.UUID();
+    this.uuid = uuid;
+    console.log(this.uuid)
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'block';
     /*document.getElementById('videos').style.display = 'none';
@@ -148,9 +159,6 @@ export class HomePage {
   doSaveNews() {
     this.getNextNoNews().subscribe(val => {
       this.nextno = val['nextno'];
-      console.log(this.myForm.value.title.length)
-      console.log(this.myForm.value.description.length)
-      console.log(this.myForm.value.imageurl.length)
       console.log(this.nextno)
       let uuid = UUID.UUID();
       this.uuid = uuid;
@@ -162,9 +170,9 @@ export class HomePage {
       this.api.post("table/z_content_news",
         {
           "id": this.nextno,
-          "title": this.myForm.value.title,
-          "description": this.myForm.value.description,
-          "image_url": this.myForm.value.imageurl,
+          "title": this.myFormNews.value.title,
+          "description": this.myFormNews.value.description,
+          "image_url": this.myFormNews.value.imageurl,
           "date": date,
           "time": time,
           "status": 'VERIFIKASI',
@@ -172,7 +180,7 @@ export class HomePage {
         },
         { headers })
         .subscribe(val => {
-          this.myForm.reset();
+          this.myFormNews.reset();
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
@@ -369,16 +377,41 @@ export class HomePage {
     document.getElementById("myGallery").style.display = "block";
   }
   doCloseAddGallery() {
-    document.getElementById("myGallery").style.display = "none";
+    let alert = this.alertCtrl.create({
+      title: 'Confirm Close',
+      message: 'Do you want to close this gallery?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+          }
+        },
+        {
+          text: 'OK',
+          handler: () => {
+            document.getElementById("myGallery").style.display = "none";
+          }
+        }
+      ]
+    });
+    alert.present();
   }
   getNextNoGallery() {
     return this.api.get('nextno/z_content_photos/id')
   }
+  getNextNoImageLink() {
+    return this.api.get('nextno/z_image_link/id')
+  }
+  doRefreshPhotos() {
+    this.api.get('table/z_image_link', { params: { limit: 1000, filter: "uuid_parent=" + "'" + this.uuid + "'" } })
+      .subscribe(val => {
+        this.photos = val['data'];
+      });
+  }
   doSaveGallery() {
     this.getNextNoGallery().subscribe(val => {
       this.nextno = val['nextno'];
-      let uuid = UUID.UUID();
-      this.uuid = uuid;
       let date = moment().format('YYYY-MM-DD');
       let time = moment().format('h:mm:ss');
       const headers = new HttpHeaders()
@@ -387,8 +420,8 @@ export class HomePage {
       this.api.post("table/z_content_photos",
         {
           "id": this.nextno,
-          "title": this.myForm.value.title,
-          "image_url_thumb": this.myForm.value.imageurl,
+          "title": this.myFormGallery.value.title,
+          "image_url_thumb": this.myFormGallery.value.imageurl,
           "date": date,
           "time": time,
           "status": 'VERIFIKASI',
@@ -396,7 +429,7 @@ export class HomePage {
         },
         { headers })
         .subscribe(val => {
-          this.myForm.reset();
+          this.myFormGallery.reset();
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
@@ -405,6 +438,30 @@ export class HomePage {
           alert.present();
           this.doCloseAddGallery();
           this.doRefresh();
+        })
+    });
+  }
+  doAddphotos() {
+    this.getNextNoImageLink().subscribe(val => {
+      this.nextno = val['nextno'];
+      let date = moment().format('YYYY-MM-DD');
+      let time = moment().format('h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_image_link",
+        {
+          "id": this.nextno,
+          "uuid_parent": this.uuid,
+          "title": this.myFormGallery.value.title,
+          "image_url": this.myFormGallery.value.url,
+          "date": date,
+          "time": time
+        },
+        { headers })
+        .subscribe(val => {
+          this.doRefreshPhotos();
+          this.myFormGallery.get('url').setValue('');
         })
     });
   }
