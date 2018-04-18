@@ -1,14 +1,136 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
-  </ion-navbar>
+<ion-header class="header">
+  <div id="header-navbar" class="header-navbar">
+    <div style="text-align:right;height:0px;">
+      <button style="top:5px;right:5px;" ion-button clear color="light" (click)="doShowOnline()">
+        <ion-icon name="md-sync" style="font-size:30px;"></ion-icon>
+      </button>
+    </div>
+    <div class="title-menu">
+    </div>
+    <div class="title-logo">
+      <h3>Barca Info Administrator</h3>
+    </div>
+  </div>
 </ion-header>
-
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content style="background:#eeeeee;">
+  <div class="sidenav">
+    <ion-item no-lines style="text-align:center;background:#343d46;border-bottom:3px solid;border-color:#808080;margin-top:-20px;">
+      <img src="assets/imgs/logo.gif" height="150" style="border-radius:100%;max-width:100px;max-height:100px;" />
+    </ion-item>
+    <a padding (click)="doNews()">
+      <ion-icon name="md-paper" style="font-size:20px;">&nbsp;&nbsp;&nbsp;News</ion-icon>
+    </a>
+    <a padding (click)="doPhotos()">
+      <ion-icon name="md-images" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Photos</ion-icon>
+    </a>
+    <a padding (click)="doVideos()">
+      <ion-icon name="md-play" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Videos</ion-icon>
+    </a>
+    <a padding (click)="doPlayers()">
+      <ion-icon name="md-people" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Players</ion-icon>
+    </a>
+    <a padding (click)="doCalendar()">
+      <ion-icon name="md-calendar" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Calendar</ion-icon>
+    </a>
+    <a padding (click)="doNobar()">
+      <ion-icon name="md-football" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Nobar</ion-icon>
+    </a>
+    <a padding (click)="doHighlight()">
+      <ion-icon name="md-rewind" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Highlight</ion-icon>
+    </a>
+    <a padding (click)="doYoutube()">
+      <ion-icon name="logo-youtube" style="font-size:18px;">&nbsp;&nbsp;&nbsp;Youtube Videos</ion-icon>
+    </a>
+    <a padding (click)="doFansPage()">
+      <ion-icon name="logo-facebook" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Fans Page</ion-icon>
+    </a>
+  </div>
+  <div class="main">
+    <div id="news" style="display: none;">
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Berita</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let newall of NewsAll">
+                <ion-avatar item-start>
+                  <img src="{{newall.image_url}}" alt="">
+                </ion-avatar>
+                <div no-padding>
+                  <h2>Title : {{newall.title}}</h2>
+                  <ion-note>Users : {{newall.id_user}}</ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Date : {{newall.date}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:1px;margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Semua Berita</div>
+              <div style="text-align:center;font-size:50px;">{{TotalNewsAll}}</div>
+            </ion-col>
+            <ion-col class="dash" col-5.9 style="margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Berita Ditambahkan Bulan Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalNewsMonth}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="dash" col-6 style="margin-right:1px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Berita Ditambahkan Hari Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalNewsDay}}</div>
+            </ion-col>
+            <ion-col class="dash" col-5.9 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Tambah Berita</div>
+              <div style="text-align:center;font-size:50px;">
+                <ion-icon name="md-add" (click)="doAddNews()"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Berita Ditambahkan Hari Ini</h5>
+          </div>
+          <ion-content style="padding-bottom:489px;">
+            <ion-item style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let newday of NewsDay">
+              <ion-avatar item-start>
+                <img src="{{newday.image_url}}" alt="">
+              </ion-avatar>
+              <div no-padding>
+                <h2>Title : {{newday.title}}</h2>
+                <ion-note>Users : {{newday.id_user}}</ion-note>
+              </div>
+              <ion-note style="margin-right:50px;" item-end>Date : {{newday.date}}</ion-note>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
+    </div>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="closeModal" (click)="doCloseAddNews()">&times;</span>
+        <ion-item>
+          <ion-label stacked>Title</ion-label>
+          <ion-input type="text"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Description</ion-label>
+          <ion-textarea></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked>Image Url</ion-label>
+          <ion-input type="text"></ion-input>
+        </ion-item>
+        <ion-buttons end>
+          <button ion-button color="greenlake" (click)="doSaveNews();">Save</button>
+        </ion-buttons>
+      </div>
+    </div>
+  </div>
 </ion-content>

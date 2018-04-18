@@ -1,3 +1,89 @@
 page-home {
-
+    .header {
+        background: #217481;
+    }    
+    .content {
+    }
+    .footer {
+    }
+    .header-navbar {
+        text-align: center;
+        background: transparent;
+        padding: 0px;
+    }
+    .title-menu {
+        text-align: left;
+        height:0px;
+    }
+    .title-logo {
+        font-size: 50px;
+        color: #ffffff;
+    }
+    textarea{
+        height:200px;	
+    }
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 5%;
+            left: 0;
+            background-color: #343d46;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 25px;
+        }
+        .sidenav a {
+            text-decoration: none;
+            font-size: 25px;
+            color: #a3a3a3;
+            display: block;
+            transition: 0.3s;
+            border-bottom:1px solid;
+        }
+        
+        .sidenav a:hover {
+            color: #343d46;
+            background: #ffffff;
+            cursor: pointer;
+        }
+        .main {
+            margin-left:250px;
+        }
+        .dash:hover {
+            cursor: pointer;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: absolute; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+        
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 1% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+        .closeModal {
+            color: #dedede;
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .closeModal:hover {
+            cursor: pointer;
+            color:#000;
+        }
+        
 }
