@@ -50,7 +50,7 @@
       <ion-card style="width:98%;" padding>
         <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
           <div class="header" padding style="background: #217481;text-align:center;">
-            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Berita Aktif</h5>
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Berita Aktif ({{TotalNewsAllActive}})</h5>
           </div>
           <div class="body">
             <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
@@ -96,7 +96,7 @@
         </div>
         <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
           <div class="header" padding style="background: #217481;">
-            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Berita Tidak Aktif</h5>
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Berita Tidak Aktif ({{TotalNewsAllNotActive}})</h5>
           </div>
           <ion-content style="padding-bottom:489px;">
             <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
@@ -110,7 +110,7 @@
                   <b>{{newday.status}}</b>
                 </ion-note>
               </div>
-              <ion-note style="margin-right:50px;" item-end>Date : {{newday.date}}</ion-note>
+              <ion-note style="margin-right:50px;" item-end>{{newday.date}}</ion-note>
             </ion-item>
           </ion-content>
         </div>
@@ -122,21 +122,23 @@
           <b>ADD NEWS</b>
           <span class="closeModal" (click)="doCloseAddNews()">&times;</span>
         </div>
-        <ion-item>
-          <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
-          <ion-input style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text" [(ngModel)]="title"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Description</ion-label>
-          <ion-textarea style="border:1px solid;border-color:#eeeeee;padding-left:5px;" [(ngModel)]="description"></ion-textarea>
-        </ion-item>
-        <ion-item>
-          <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
-          <ion-input type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" [(ngModel)]="imageurl"></ion-input>
-        </ion-item>
+        <form [formGroup]="myForm">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
+            <ion-input formControlName="title" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Description</ion-label>
+            <ion-textarea formControlName="description" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
+            <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
         <ion-buttons end padding>
-          <button ion-button color="bluedark" (click)="doSaveNews();">Save</button>
+          <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myForm.valid">Save</button>
         </ion-buttons>
+      </form>
       </div>
     </div>
   </div>

@@ -4,13 +4,14 @@ import { ApiProvider } from '../../providers/api/api';
 import moment from 'moment';
 import { UUID } from 'angular2-uuid';
 import { HttpHeaders } from "@angular/common/http";
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  myForm: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -21,9 +22,6 @@ export class HomePage {
   public TotalNewsMonth: any;
   public NewsDay = [];
   public TotalNewsDay: any;
-  public title: any;
-  public description: any;
-  public imageurl: any;
   public nextno: any;
   public uuid = '';
 
@@ -31,8 +29,13 @@ export class HomePage {
     public navCtrl: NavController,
     public api: ApiProvider,
     public alertCtrl: AlertController,
+    public fb: FormBuilder,
     public actionSheetCtrl: ActionSheetController) {
-
+    this.myForm = fb.group({
+      title: ['', Validators.compose([Validators.required])],
+      description: ['', Validators.compose([Validators.required])],
+      imageurl: ['', Validators.compose([Validators.required])],
+    })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
     this.doGetNewsAllNotActive();
@@ -108,6 +111,10 @@ export class HomePage {
   doSaveNews() {
     this.getNextNoNews().subscribe(val => {
       this.nextno = val['nextno'];
+      console.log(this.myForm.value.title.length)
+      console.log(this.myForm.value.description.length)
+      console.log(this.myForm.value.imageurl.length)
+      console.log(this.nextno)
       let uuid = UUID.UUID();
       this.uuid = uuid;
       let date = moment().format('YYYY-MM-DD');
@@ -118,9 +125,9 @@ export class HomePage {
       this.api.post("table/z_content_news",
         {
           "id": this.nextno,
-          "title": this.title,
-          "description": this.description,
-          "image_url": this.imageurl,
+          "title": this.myForm.value.title,
+          "description": this.myForm.value.description,
+          "image_url": this.myForm.value.imageurl,
           "date": date,
           "time": time,
           "status": 'VERIFIKASI',
@@ -128,9 +135,7 @@ export class HomePage {
         },
         { headers })
         .subscribe(val => {
-          this.title = '';
-          this.description = '';
-          this.imageurl = '';
+          this.myForm.reset();
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
