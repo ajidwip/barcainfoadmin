@@ -273,6 +273,92 @@
       </div>
     </div>
 
+    <div id="videos" style="display: none;">
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Video Aktif (TotalVideosAllActive)</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let videoall of VideosAllActive" (click)="doUpdateStatusVideosActive(videoall)">
+                <div no-padding>
+                  <h2>Title : {{videoall.title}}</h2>
+                  <ion-note>Status :
+                    <b>{{videoall.status}}</b>
+                  </ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Date : {{videoall.date}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Semua Video</div>
+              <div style="text-align:center;font-size:50px;">{{TotalVideosAll}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Video Ditambahkan Bulan Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalVideosMonth}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Video Ditambahkan Hari Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalVideosDay}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Tambah Video</div>
+              <div style="text-align:center;font-size:50px;">
+                <ion-icon class="hoverbutton" name="md-add" (click)="doAddVideos()"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Video Tidak Aktif ({{TotalVideosAllNotActive}})</h5>
+          </div>
+          <ion-content style="padding-bottom:489px;">
+            <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let videoday of VideosAllNotActive" (click)="doUpdateStatusVideosNotActive(videoday)">
+              <div no-padding>
+                <h2>Title : {{videoday.title}}</h2>
+                <ion-note>Status :
+                  <b>{{videoday.status}}</b>
+                </ion-note>
+              </div>
+              <ion-note style="margin-right:50px;" item-end>{{videoday.date}}</ion-note>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
+    </div>
+    <div id="myVideos" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>ADD VIDEO</b>
+          <span class="closeModal" (click)="doCloseAddVideos()">&times;</span>
+        </div>
+        <form [formGroup]="myFormVideos">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
+            <ion-input formControlName="title" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Video Url</ion-label>
+            <ion-input formControlName="videourl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveVideos();" [disabled]="!myFormVideos.valid">Save</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
+
 
   </div>
 </ion-content>

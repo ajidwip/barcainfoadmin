@@ -13,6 +13,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 export class HomePage {
   myFormNews: FormGroup;
   myFormGallery: FormGroup;
+  myFormVideos: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -37,6 +38,17 @@ export class HomePage {
   public photos = [];
   public id: any;
 
+  public VideosAll = [];
+  public TotalVideosAll: any;
+  public VideosAllActive = [];
+  public TotalVideosAllActive: any;
+  public VideosAllNotActive = [];
+  public TotalVideosAllNotActive: any;
+  public VideosMonth = [];
+  public TotalVideosMonth: any;
+  public VideosDay = [];
+  public TotalVideosDay: any;
+
   public nextno: any;
   public uuid = '';
 
@@ -56,12 +68,17 @@ export class HomePage {
       imageurl: ['', Validators.compose([Validators.required])],
       url: [''],
     })
+    this.myFormVideos = fb.group({
+      title: ['', Validators.compose([Validators.required])],
+      videourl: ['', Validators.compose([Validators.required])]
+    })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
     this.doGetNewsAllNotActive();
     this.doGetNewsAll();
     this.doGetNewsMonth();
     this.doGetNewsDay();
+
     this.doGetGalleryAll();
     this.doGetGalleryAllActive();
     this.doGetGalleryAllNotActive();
@@ -69,10 +86,18 @@ export class HomePage {
     this.doGetGalleryMonth();
     this.doGetGalleryDay();
     this.doRefreshPhotos();
+
+    this.doGetVideosAll();
+    this.doGetVideosAllActive();
+    this.doGetVideosAllNotActive();
+    this.doGetVideosAll();
+    this.doGetVideosMonth();
+    this.doGetVideosDay();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
     document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
     /*document.getElementById('videos').style.display = 'none';
     document.getElementById('players').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
@@ -84,6 +109,19 @@ export class HomePage {
   doPhotos() {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'block';
+    document.getElementById('videos').style.display = 'none';
+    /*document.getElementById('videos').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    document.getElementById('nobar').style.display = 'none';
+    document.getElementById('highlight').style.display = 'none';
+    document.getElementById('youtube').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';*/
+  }
+  doVideos() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'block';
     /*document.getElementById('videos').style.display = 'none';
     document.getElementById('players').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
@@ -105,6 +143,12 @@ export class HomePage {
     this.doGetGalleryAll();
     this.doGetGalleryMonth();
     this.doGetGalleryDay();
+    this.doGetVideosAll();
+    this.doGetVideosAllActive();
+    this.doGetVideosAllNotActive();
+    this.doGetVideosAll();
+    this.doGetVideosMonth();
+    this.doGetVideosDay();
   }
   /******************************************NEWS*************************************************/
 
@@ -645,4 +689,230 @@ export class HomePage {
     actionSheet.present();
   }
   /*************************************************************************************************/
+  /*******************************************VIDEOS************************************************/
+  doGetVideosAll() {
+    this.api.get('table/z_content_videos', { params: { limit: 1000 } })
+      .subscribe(val => {
+        this.VideosAll = val['data'];
+        this.TotalVideosAll = val['count']
+      });
+  }
+  doGetVideosAllActive() {
+    this.api.get('table/z_content_videos', { params: { limit: 1000, filter: "status='OPEN'" } })
+      .subscribe(val => {
+        this.VideosAllActive = val['data'];
+        this.TotalVideosAllActive = val['count']
+      });
+  }
+  doGetVideosAllNotActive() {
+    this.api.get('table/z_content_videos', { params: { limit: 1000, filter: "status!='OPEN'" } })
+      .subscribe(val => {
+        this.VideosAllNotActive = val['data'];
+        this.TotalVideosAllNotActive = val['count']
+      });
+  }
+  doGetVideosMonth() {
+    let month = moment().format('MM');
+    this.api.get('table/z_content_videos', { params: { limit: 1000, filter: "month(date)=" + month } })
+      .subscribe(val => {
+        this.VideosMonth = val['data'];
+        this.TotalVideosMonth = val['count']
+      });
+  }
+  doGetVideosDay() {
+    let day = moment().format('YYYY-MM-DD');
+    this.api.get('table/z_content_videos', { params: { limit: 1000, filter: "date=" + "'" + day + "'" } })
+      .subscribe(val => {
+        this.VideosDay = val['data'];
+        this.TotalVideosDay = val['count']
+      });
+  }
+  doAddVideos() {
+    this.myFormVideos.get('videourl').setValue('https://www.youtube.com/embed/')
+    document.getElementById("myVideos").style.display = "block";
+  }
+  doCloseAddVideos() {
+    document.getElementById("myVideos").style.display = "none";
+  }
+  getNextNoVideos() {
+    return this.api.get('nextno/z_content_videos/id')
+  }
+  doSaveVideos() {
+    this.getNextNoVideos().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let date = moment().format('YYYY-MM-DD');
+      let time = moment().format('h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_content_videos",
+        {
+          "id": this.nextno,
+          "title": this.myFormVideos.value.title,
+          "video_url": this.myFormVideos.value.videourl,
+          "date": date,
+          "time": time,
+          "status": 'VERIFIKASI',
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormNews.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseAddVideos();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
+  doUpdateStatusVideosNotActive(videoall) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'TOOLS',
+      buttons: [
+        {
+          text: 'VIEW',
+          icon: 'md-eye',
+          handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE OPEN',
+          icon: 'md-open',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_content_videos",
+              {
+                "id": videoall.id,
+                "status": 'OPEN'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'UPDATE CLSD',
+          icon: 'md-hand',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_content_videos",
+              {
+                "id": videoall.id,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'md-close',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
+  }
+  doUpdateStatusVideosActive(videoday) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'TOOLS',
+      buttons: [
+        {
+          text: 'VIEW',
+          icon: 'md-eye',
+          handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE OPEN',
+          icon: 'md-open',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_content_videos",
+              {
+                "id": videoday.id,
+                "status": 'OPEN'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'UPDATE CLSD',
+          icon: 'md-hand',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_content_videos",
+              {
+                "id": videoday.id,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'md-close',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
+  }
+  /*************************************************************************************************/
+
 }
