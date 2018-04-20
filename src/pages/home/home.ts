@@ -35,6 +35,7 @@ export class HomePage {
   public GalleryDay = [];
   public TotalGalleryDay: any;
   public photos = [];
+  public id: any;
 
   public nextno: any;
   public uuid = '';
@@ -81,9 +82,6 @@ export class HomePage {
     document.getElementById('fanspage').style.display = 'none';*/
   }
   doPhotos() {
-    let uuid = UUID.UUID();
-    this.uuid = uuid;
-    console.log(this.uuid)
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'block';
     /*document.getElementById('videos').style.display = 'none';
@@ -159,7 +157,6 @@ export class HomePage {
   doSaveNews() {
     this.getNextNoNews().subscribe(val => {
       this.nextno = val['nextno'];
-      console.log(this.nextno)
       let uuid = UUID.UUID();
       this.uuid = uuid;
       let date = moment().format('YYYY-MM-DD');
@@ -189,6 +186,8 @@ export class HomePage {
           alert.present();
           this.doCloseAddNews();
           this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
         })
     });
   }
@@ -374,7 +373,31 @@ export class HomePage {
       });
   }
   doAddGallery() {
-    document.getElementById("myGallery").style.display = "block";
+    let uuid = UUID.UUID();
+    this.uuid = uuid;
+    this.getNextNoGallery().subscribe(val => {
+      this.nextno = val['nextno'];
+      this.id = this.nextno;
+      let date = moment().format('YYYY-MM-DD');
+      let time = moment().format('h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_content_photos",
+        {
+          "id": this.id,
+          "title": this.myFormGallery.value.title,
+          "image_url_thumb": this.myFormGallery.value.imageurl,
+          "date": date,
+          "time": time,
+          "status": 'VERIFIKASI',
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          document.getElementById("myGallery").style.display = "block";
+        })
+    });
   }
   doCloseAddGallery() {
     let alert = this.alertCtrl.create({
@@ -390,7 +413,16 @@ export class HomePage {
         {
           text: 'OK',
           handler: () => {
-            document.getElementById("myGallery").style.display = "none";
+            const headers = new HttpHeaders()
+            .set("Content-Type", "application/json");
+            this.api.delete('table/z_content_photos', { params: { limit: 1000, filter: "id=" + "'" + this.id + "'"  } })
+              .subscribe(val => {
+                document.getElementById("myGallery").style.display = "none";
+                this.nextno = '';
+                this.id = '';
+                this.uuid = '';
+                this.photos = [];
+              });
           }
         }
       ]
@@ -410,36 +442,36 @@ export class HomePage {
       });
   }
   doSaveGallery() {
-    this.getNextNoGallery().subscribe(val => {
-      this.nextno = val['nextno'];
-      let date = moment().format('YYYY-MM-DD');
-      let time = moment().format('h:mm:ss');
-      const headers = new HttpHeaders()
-        .set("Content-Type", "application/json");
+    let date = moment().format('YYYY-MM-DD');
+    let time = moment().format('h:mm:ss');
+    const headers = new HttpHeaders()
+      .set("Content-Type", "application/json");
 
-      this.api.post("table/z_content_photos",
-        {
-          "id": this.nextno,
-          "title": this.myFormGallery.value.title,
-          "image_url_thumb": this.myFormGallery.value.imageurl,
-          "date": date,
-          "time": time,
-          "status": 'VERIFIKASI',
-          "uuid": this.uuid
-        },
-        { headers })
-        .subscribe(val => {
-          this.myFormGallery.reset();
-          let alert = this.alertCtrl.create({
-            title: 'Sukses',
-            subTitle: 'Save Sukses',
-            buttons: ['OK']
-          });
-          alert.present();
-          this.doCloseAddGallery();
-          this.doRefresh();
-        })
-    });
+    this.api.put("table/z_content_photos",
+      {
+        "id": this.id,
+        "title": this.myFormGallery.value.title,
+        "image_url_thumb": this.myFormGallery.value.imageurl,
+        "date": date,
+        "time": time,
+        "status": 'VERIFIKASI'
+      },
+      { headers })
+      .subscribe(val => {
+        this.myFormGallery.reset();
+        let alert = this.alertCtrl.create({
+          title: 'Sukses',
+          subTitle: 'Save Sukses',
+          buttons: ['OK']
+        });
+        alert.present();
+        document.getElementById("myGallery").style.display = "none";
+        this.doRefresh();
+        this.nextno = '';
+        this.id = '';
+        this.uuid = '';
+        this.photos = [];
+      })
   }
   doAddphotos() {
     this.getNextNoImageLink().subscribe(val => {
@@ -473,6 +505,13 @@ export class HomePage {
           text: 'VIEW',
           icon: 'md-eye',
           handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE GALLERY',
+          icon: 'md-image',
+          handler: () => {
+
           }
         },
         {
