@@ -70,6 +70,7 @@ export class HomePage {
     })
     this.myFormVideos = fb.group({
       title: ['', Validators.compose([Validators.required])],
+      imageurlthumb: ['', Validators.compose([Validators.required])],
       videourl: ['', Validators.compose([Validators.required])]
     })
     this.doGetNewsAll();
@@ -751,6 +752,7 @@ export class HomePage {
         {
           "id": this.nextno,
           "title": this.myFormVideos.value.title,
+          "image_url_thumb" : this.myFormVideos.value.imageurlthumb,
           "video_url": this.myFormVideos.value.videourl,
           "date": date,
           "time": time,
@@ -759,7 +761,7 @@ export class HomePage {
         },
         { headers })
         .subscribe(val => {
-          this.myFormNews.reset();
+          this.myFormVideos.reset();
           let alert = this.alertCtrl.create({
             title: 'Sukses',
             subTitle: 'Save Sukses',
