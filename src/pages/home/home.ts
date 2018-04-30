@@ -14,6 +14,7 @@ export class HomePage {
   myFormNews: FormGroup;
   myFormGallery: FormGroup;
   myFormVideos: FormGroup;
+  myFormSchedule: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -49,6 +50,17 @@ export class HomePage {
   public VideosDay = [];
   public TotalVideosDay: any;
 
+  public ScheduleAll = [];
+  public TotalScheduleAll: any;
+  public ScheduleAllActive = [];
+  public TotalScheduleAllActive: any;
+  public ScheduleAllNotActive = [];
+  public TotalScheduleAllNotActive: any;
+  public ScheduleMonth = [];
+  public TotalScheduleMonth: any;
+  public ScheduleDay = [];
+  public TotalScheduleDay: any;
+
   public nextno: any;
   public uuid = '';
 
@@ -62,6 +74,7 @@ export class HomePage {
       title: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])],
       imageurl: ['', Validators.compose([Validators.required])],
+      sumber: ['', Validators.compose([Validators.required])],
     })
     this.myFormGallery = fb.group({
       title: ['', Validators.compose([Validators.required])],
@@ -72,6 +85,17 @@ export class HomePage {
       title: ['', Validators.compose([Validators.required])],
       imageurlthumb: ['', Validators.compose([Validators.required])],
       videourl: ['', Validators.compose([Validators.required])]
+    })
+    this.myFormSchedule = fb.group({
+      league: ['', Validators.compose([Validators.required])],
+      round: ['', Validators.compose([Validators.required])],
+      clubhome: ['', Validators.compose([Validators.required])],
+      clubhomeicon: ['', Validators.compose([Validators.required])],
+      clubaway: ['', Validators.compose([Validators.required])],
+      clubawayicon: ['', Validators.compose([Validators.required])],
+      place: ['', Validators.compose([Validators.required])],
+      date: ['', Validators.compose([Validators.required])],
+      time: ['', Validators.compose([Validators.required])]
     })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
@@ -94,13 +118,20 @@ export class HomePage {
     this.doGetVideosAll();
     this.doGetVideosMonth();
     this.doGetVideosDay();
+
+    this.doGetScheduleAll();
+    this.doGetScheduleAllActive();
+    this.doGetScheduleAllNotActive();
+    this.doGetScheduleAll();
+    this.doGetScheduleMonth();
+    this.doGetScheduleDay();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
     document.getElementById('photos').style.display = 'none';
     document.getElementById('videos').style.display = 'none';
-    /*document.getElementById('videos').style.display = 'none';
-    document.getElementById('players').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    /*document.getElementById('players').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('nobar').style.display = 'none';
     document.getElementById('highlight').style.display = 'none';
@@ -111,8 +142,8 @@ export class HomePage {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'block';
     document.getElementById('videos').style.display = 'none';
-    /*document.getElementById('videos').style.display = 'none';
-    document.getElementById('players').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    /*document.getElementById('players').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('nobar').style.display = 'none';
     document.getElementById('highlight').style.display = 'none';
@@ -123,8 +154,20 @@ export class HomePage {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'none';
     document.getElementById('videos').style.display = 'block';
-    /*document.getElementById('videos').style.display = 'none';
-    document.getElementById('players').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    /*document.getElementById('players').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    document.getElementById('nobar').style.display = 'none';
+    document.getElementById('highlight').style.display = 'none';
+    document.getElementById('youtube').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';*/
+  }
+  doCalendar() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
+    document.getElementById('calendar').style.display = 'block';
+    /*document.getElementById('players').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('nobar').style.display = 'none';
     document.getElementById('highlight').style.display = 'none';
@@ -150,6 +193,12 @@ export class HomePage {
     this.doGetVideosAll();
     this.doGetVideosMonth();
     this.doGetVideosDay();
+    this.doGetScheduleAll();
+    this.doGetScheduleAllActive();
+    this.doGetScheduleAllNotActive();
+    this.doGetScheduleAll();
+    this.doGetScheduleMonth();
+    this.doGetScheduleDay();
   }
   /******************************************NEWS*************************************************/
 
@@ -204,8 +253,7 @@ export class HomePage {
       this.nextno = val['nextno'];
       let uuid = UUID.UUID();
       this.uuid = uuid;
-      let date = moment().format('YYYY-MM-DD');
-      let time = moment().format('h:mm:ss');
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -214,9 +262,9 @@ export class HomePage {
           "id": this.nextno,
           "title": this.myFormNews.value.title,
           "description": this.myFormNews.value.description,
+          "sumber": this.myFormNews.value.sumber,
           "image_url": this.myFormNews.value.imageurl,
           "date": date,
-          "time": time,
           "status": 'VERIFIKASI',
           "uuid": this.uuid
         },
@@ -423,8 +471,7 @@ export class HomePage {
     this.getNextNoGallery().subscribe(val => {
       this.nextno = val['nextno'];
       this.id = this.nextno;
-      let date = moment().format('YYYY-MM-DD');
-      let time = moment().format('h:mm:ss');
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -434,7 +481,6 @@ export class HomePage {
           "title": this.myFormGallery.value.title,
           "image_url_thumb": this.myFormGallery.value.imageurl,
           "date": date,
-          "time": time,
           "status": 'VERIFIKASI',
           "uuid": this.uuid
         },
@@ -487,8 +533,7 @@ export class HomePage {
       });
   }
   doSaveGallery() {
-    let date = moment().format('YYYY-MM-DD');
-    let time = moment().format('h:mm:ss');
+    let date = moment().format('YYYY-MM-DD h:mm:ss');
     const headers = new HttpHeaders()
       .set("Content-Type", "application/json");
 
@@ -498,7 +543,6 @@ export class HomePage {
         "title": this.myFormGallery.value.title,
         "image_url_thumb": this.myFormGallery.value.imageurl,
         "date": date,
-        "time": time,
         "status": 'VERIFIKASI'
       },
       { headers })
@@ -521,8 +565,7 @@ export class HomePage {
   doAddphotos() {
     this.getNextNoImageLink().subscribe(val => {
       this.nextno = val['nextno'];
-      let date = moment().format('YYYY-MM-DD');
-      let time = moment().format('h:mm:ss');
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -532,8 +575,7 @@ export class HomePage {
           "uuid_parent": this.uuid,
           "title": this.myFormGallery.value.title,
           "image_url": this.myFormGallery.value.url,
-          "date": date,
-          "time": time
+          "date": date
         },
         { headers })
         .subscribe(val => {
@@ -743,8 +785,7 @@ export class HomePage {
       this.nextno = val['nextno'];
       let uuid = UUID.UUID();
       this.uuid = uuid;
-      let date = moment().format('YYYY-MM-DD');
-      let time = moment().format('h:mm:ss');
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
 
@@ -755,7 +796,6 @@ export class HomePage {
           "image_url_thumb" : this.myFormVideos.value.imageurlthumb,
           "video_url": this.myFormVideos.value.videourl,
           "date": date,
-          "time": time,
           "status": 'VERIFIKASI',
           "uuid": this.uuid
         },
@@ -889,6 +929,239 @@ export class HomePage {
             this.api.put("table/z_content_videos",
               {
                 "id": videoday.id,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'md-close',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
+  }
+  /*************************************************************************************************/
+   /*******************************************SCHEDULE************************************************/
+   doGetScheduleAll() {
+    this.api.get('table/z_schedule', { params: { limit: 1000 } })
+      .subscribe(val => {
+        this.ScheduleAll = val['data'];
+        this.TotalScheduleAll = val['count']
+      });
+  }
+  doGetScheduleAllActive() {
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status='OPEN'" } })
+      .subscribe(val => {
+        this.ScheduleAllActive = val['data'];
+        this.TotalScheduleAllActive = val['count']
+      });
+  }
+  doGetScheduleAllNotActive() {
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status!='OPEN'" } })
+      .subscribe(val => {
+        this.ScheduleAllNotActive = val['data'];
+        this.TotalScheduleAllNotActive = val['count']
+      });
+  }
+  doGetScheduleMonth() {
+    let month = moment().format('MM');
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "month(date)=" + month } })
+      .subscribe(val => {
+        this.ScheduleMonth = val['data'];
+        this.TotalScheduleMonth = val['count']
+      });
+  }
+  doGetScheduleDay() {
+    let day = moment().format('YYYY-MM-DD');
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "date=" + "'" + day + "'" } })
+      .subscribe(val => {
+        this.ScheduleDay = val['data'];
+        this.TotalScheduleDay = val['count']
+      });
+  }
+  doAddSchedule() {
+    document.getElementById("mySchedule").style.display = "block";
+  }
+  doCloseAddSchedule() {
+    document.getElementById("mySchedule").style.display = "none";
+  }
+  getNextNoSchedule() {
+    return this.api.get('nextno/z_schedule/id')
+  }
+  doSaveSchedule() {
+    this.getNextNoSchedule().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let year = moment().format('YYYY');
+      let month = moment().format('MMMM');
+      let day = moment().format('DD');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_schedule",
+        {
+          "id": this.nextno,
+          "league": this.myFormSchedule.value.league,
+          "round": this.myFormSchedule.value.round,
+          "club_home": this.myFormSchedule.value.clubhome,
+          "club_home_icon_url": this.myFormSchedule.value.clubhomeicon,
+          "club_away": this.myFormSchedule.value.clubaway,
+          "club_away_icon_url": this.myFormSchedule.value.clubawayicon,
+          "place": this.myFormSchedule.value.place,
+          "year": year,
+          "month": month,
+          "day": day,
+          "date": this.myFormSchedule.value.date,
+          "time": this.myFormSchedule.value.time,
+          "status": 'VERIFIKASI',
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormSchedule.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseAddSchedule();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
+  doUpdateStatusScheduleNotActive(scheduleall) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'TOOLS',
+      buttons: [
+        {
+          text: 'VIEW',
+          icon: 'md-eye',
+          handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE OPEN',
+          icon: 'md-open',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_schedule",
+              {
+                "id": scheduleall.id,
+                "status": 'OPEN'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'UPDATE CLSD',
+          icon: 'md-hand',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_schedule",
+              {
+                "id": scheduleall.id,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'md-close',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
+  }
+  doUpdateStatusScheduleActive(scheduleday) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'TOOLS',
+      buttons: [
+        {
+          text: 'VIEW',
+          icon: 'md-eye',
+          handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE OPEN',
+          icon: 'md-open',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_schedule",
+              {
+                "id": scheduleday.id,
+                "status": 'OPEN'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'UPDATE CLSD',
+          icon: 'md-hand',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_schedule",
+              {
+                "id": scheduleday.id,
                 "status": 'CLSD'
               },
               { headers })

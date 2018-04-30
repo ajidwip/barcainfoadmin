@@ -135,6 +135,10 @@
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Image Url</ion-label>
             <ion-input formControlName="imageurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
           </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Sumber</ion-label>
+            <ion-input formControlName="sumber" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
           <ion-buttons end padding>
             <button ion-button color="bluedark" (click)="doSaveNews();" [disabled]="!myFormNews.valid">Save</button>
           </ion-buttons>
@@ -277,7 +281,7 @@
       <ion-card style="width:98%;" padding>
         <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
           <div class="header" padding style="background: #217481;text-align:center;">
-            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Video Aktif (TotalVideosAllActive)</h5>
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Video Aktif ({{TotalVideosAllActive}})</h5>
           </div>
           <div class="body">
             <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
@@ -363,6 +367,126 @@
       </div>
     </div>
 
+
+    <div id="calendar" style="display: none;">
+      <ion-card style="width:98%;" padding>
+        <div class="right" style="height:0px;margin-left:46%;margin-top:0px;border:1px solid;border-color:#dedede;right:0px;width:54%;">
+          <div class="header" padding style="background: #217481;text-align:center;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;">Semua Jadwal ({{TotalScheduleAllActive}})</h5>
+          </div>
+          <div class="body">
+            <ion-content style="padding-bottom:700px;border:1px solid;border-color:#eeeeee;">
+              <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+                *ngFor="let scheduleall of ScheduleAllActive" (click)="doUpdateStatusScheduleActive(scheduleall)">
+                <div no-padding>
+                  <h2>League : {{scheduleall.league}}</h2>
+                  <ion-note>Status :
+                    <b>{{scheduleall.status}}</b>
+                  </ion-note>
+                </div>
+                <ion-note style="margin-right:50px;" item-end>Date : {{scheduleall.date}}</ion-note>
+              </ion-item>
+            </ion-content>
+          </div>
+        </div>
+        <div class="left-top" style="left:0px;width:45%;margin-top:-2px;">
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Semua Jadwal</div>
+              <div style="text-align:center;font-size:50px;">{{TotalScheduleAll}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="margin-bottom:1px;background: #eeeeee;color:#217481;border-radius:2%;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Jadwal Ditambahkan Bulan Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalScheduleMonth}}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col col-6 style="margin-right:1px;background: #eb0303;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Jadwal Ditambahkan Hari Ini</div>
+              <div style="text-align:center;font-size:50px;">{{TotalScheduleDay}}</div>
+            </ion-col>
+            <ion-col col-5.9 style="background: #16bd00;border-radius:2%;color:#ffffff;height:100px;font-weight: bold;">
+              <div style="text-align:center;">Tambah Jadwal</div>
+              <div style="text-align:center;font-size:50px;">
+                <ion-icon class="hoverbutton" name="md-add" (click)="doAddSchedule()"></ion-icon>
+              </div>
+            </ion-col>
+          </ion-row>
+        </div>
+        <div class="left-bottom" style="margin-top:10px;border:1px solid;border-color:#dedede;left:0px;width:45%;">
+          <div class="header" padding style="background: #217481;">
+            <h5 style="font-size:15px;font-weight: bold;color:#ffffff;text-align: center;">Jadwal Tidak Aktif ({{TotalScheduleAllNotActive}})</h5>
+          </div>
+          <ion-content style="padding-bottom:489px;">
+            <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
+              *ngFor="let scheduleday of ScheduleAllNotActive" (click)="doUpdateStatusScheduleNotActive(scheduleday)">
+              <div no-padding>
+                <h2>League : {{scheduleday.league}}</h2>
+                <ion-note>Status :
+                  <b>{{scheduleday.status}}</b>
+                </ion-note>
+              </div>
+              <ion-note style="margin-right:50px;" item-end>{{scheduleday.date}}</ion-note>
+            </ion-item>
+          </ion-content>
+        </div>
+      </ion-card>
+    </div>
+    <div id="mySchedule" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>ADD JADWAL</b>
+          <span class="closeModal" (click)="doCloseAddSchedule()">&times;</span>
+        </div>
+        <form [formGroup]="myFormSchedule">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">League</ion-label>
+            <ion-input formControlName="league" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Round</ion-label>
+            <ion-input formControlName="round" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Home</ion-label>
+            <ion-select formControlName="clubhome" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" (ionChange)="onSelectClubHome()">
+              <ion-option value="f">Female</ion-option>
+              <ion-option value="m">Male</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Home Icon</ion-label>
+            <ion-input disabled formControlName="clubhomeicon" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Away</ion-label>
+            <ion-select formControlName="clubaway" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" (ionChange)="onSelectClubAway()">
+              <ion-option value="f">Female</ion-option>
+              <ion-option value="m">Male</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Away Icon</ion-label>
+            <ion-input disabled formControlName="clubawayicon" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Place</ion-label>
+            <ion-input formControlName="place" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Date</ion-label>
+            <ion-datetime displayFormat="MM/DD/YYYY" formControlName="date" min="2018" max="2020-10-31" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Time</ion-label>
+            <ion-datetime displayFormat="HH:mm" formControlName="time" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveSchedule();" [disabled]="!myFormSchedule.valid">Save</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
 
   </div>
 </ion-content>
