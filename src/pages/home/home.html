@@ -379,12 +379,13 @@
               <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
                 *ngFor="let scheduleall of ScheduleAllActive" (click)="doUpdateStatusScheduleActive(scheduleall)">
                 <div no-padding>
-                  <h2>League : {{scheduleall.league}}</h2>
+                  <h2>Liga : {{scheduleall.league}}</h2>
+                  <h3>Pertandingan : {{scheduleall.league}} {{scheduleall.round}} {{scheduleall.club_home}} vs {{scheduleall.club_away}}</h3>
                   <ion-note>Status :
                     <b>{{scheduleall.status}}</b>
                   </ion-note>
                 </div>
-                <ion-note style="margin-right:50px;" item-end>Date : {{scheduleall.date}}</ion-note>
+                <ion-note style="margin-right:50px;" item-end>{{scheduleall.date | date:"dd-MM-yyyy"}} {{scheduleall.date | date:"HH:mm"}}</ion-note>
               </ion-item>
             </ion-content>
           </div>
@@ -421,12 +422,13 @@
             <ion-item class="hoveritem" style="border-bottom: 1px solid;border-color:#eeeeee;margin-left:-15px;margin-top:-15px;width:111%;margin-bottom:15px;"
               *ngFor="let scheduleday of ScheduleAllNotActive" (click)="doUpdateStatusScheduleNotActive(scheduleday)">
               <div no-padding>
-                <h2>League : {{scheduleday.league}}</h2>
+                <h2>Liga : {{scheduleday.league}}</h2>
+                <h3>Pertandingan : {{scheduleday.league}} {{scheduleday.round}} {{scheduleday.club_home}} vs {{scheduleday.club_away}}</h3>
                 <ion-note>Status :
                   <b>{{scheduleday.status}}</b>
                 </ion-note>
               </div>
-              <ion-note style="margin-right:50px;" item-end>{{scheduleday.date}}</ion-note>
+              <ion-note style="margin-right:50px;" item-end>{{scheduleday.date | date:"dd-MM-yyyy"}} {{scheduleday.date | date:"HH:mm"}}</ion-note>
             </ion-item>
           </ion-content>
         </div>
@@ -442,10 +444,10 @@
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">League</ion-label>
             <ion-select formControlName="league" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
-              <ion-option value="LA LIGA">LA LIGA</ion-option>
-              <ion-option value="LIGA CHAMPIONS">LIGA CHAMPIONS</ion-option>
-              <ion-option value="COPA DEL REY">COPA DEL REY</ion-option>
-              <ion-option value="PRA MUSIM">PRA MUSIM</ion-option>
+              <ion-option value="La Liga">LA LIGA</ion-option>
+              <ion-option value="Liga Champions">LIGA CHAMPIONS</ion-option>
+              <ion-option value="Copa Del Rey">COPA DEL REY</ion-option>
+              <ion-option value="Pra Musim">PRA MUSIM</ion-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -478,11 +480,7 @@
           </ion-item>
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Date</ion-label>
-            <ion-datetime displayFormat="MM/DD/YYYY" formControlName="date" min="2018" max="2020-10-31" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
-          </ion-item>
-          <ion-item>
-            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Time</ion-label>
-            <ion-datetime displayFormat="HH:mm" formControlName="time" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
+            <ion-datetime displayFormat="DD/MMMM/YYYY HH:mm" formControlName="date" min="2018" max="2020-10-31" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
           </ion-item>
           <ion-buttons end padding>
             <button ion-button color="bluedark" (click)="doSaveSchedule();" [disabled]="!myFormSchedule.valid">Save</button>

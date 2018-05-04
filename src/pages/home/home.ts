@@ -98,8 +98,7 @@ export class HomePage {
       clubaway: ['', Validators.compose([Validators.required])],
       clubawayicon: ['', Validators.compose([Validators.required])],
       place: ['', Validators.compose([Validators.required])],
-      date: ['', Validators.compose([Validators.required])],
-      time: ['', Validators.compose([Validators.required])]
+      date: ['', Validators.compose([Validators.required])]
     })
     this.myFormClub = fb.group({
       nation: ['', Validators.compose([Validators.required])],
@@ -1021,7 +1020,6 @@ export class HomePage {
       let day = moment().format('DD');
       const headers = new HttpHeaders()
         .set("Content-Type", "application/json");
-
       this.api.post("table/z_schedule",
         {
           "id": this.nextno,
@@ -1032,13 +1030,8 @@ export class HomePage {
           "club_away": this.myFormSchedule.value.clubaway,
           "club_away_icon_url": this.myFormSchedule.value.clubawayicon,
           "place": this.myFormSchedule.value.place,
-          "year": year,
-          "month": month,
-          "day": day,
           "date": this.myFormSchedule.value.date,
-          "time": this.myFormSchedule.value.time,
-          "skor_home" : null,
-          "skor_away" : null,
+          "status": 'VERIFIKASI',
           "uuid": this.uuid
         },
         { headers })
