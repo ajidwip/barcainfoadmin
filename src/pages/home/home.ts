@@ -15,6 +15,7 @@ export class HomePage {
   myFormGallery: FormGroup;
   myFormVideos: FormGroup;
   myFormSchedule: FormGroup;
+  myFormClub: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -61,6 +62,9 @@ export class HomePage {
   public ScheduleDay = [];
   public TotalScheduleDay: any;
 
+  public Clubs = [];
+  public TotalClubs: any;
+
   public nextno: any;
   public uuid = '';
 
@@ -97,6 +101,13 @@ export class HomePage {
       date: ['', Validators.compose([Validators.required])],
       time: ['', Validators.compose([Validators.required])]
     })
+    this.myFormClub = fb.group({
+      nation: ['', Validators.compose([Validators.required])],
+      clubname: ['', Validators.compose([Validators.required])],
+      alias: ['', Validators.compose([Validators.required])],
+      stadion: ['', Validators.compose([Validators.required])],
+      iconurl: ['', Validators.compose([Validators.required])]
+    })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
     this.doGetNewsAllNotActive();
@@ -125,54 +136,43 @@ export class HomePage {
     this.doGetScheduleAll();
     this.doGetScheduleMonth();
     this.doGetScheduleDay();
+
+    this.doGetClub();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
     document.getElementById('photos').style.display = 'none';
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
-    /*document.getElementById('players').style.display = 'none';
-    document.getElementById('calendar').style.display = 'none';
-    document.getElementById('nobar').style.display = 'none';
-    document.getElementById('highlight').style.display = 'none';
-    document.getElementById('youtube').style.display = 'none';
-    document.getElementById('fanspage').style.display = 'none';*/
+    document.getElementById('club').style.display = 'none';
   }
   doPhotos() {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'block';
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
-    /*document.getElementById('players').style.display = 'none';
-    document.getElementById('calendar').style.display = 'none';
-    document.getElementById('nobar').style.display = 'none';
-    document.getElementById('highlight').style.display = 'none';
-    document.getElementById('youtube').style.display = 'none';
-    document.getElementById('fanspage').style.display = 'none';*/
+    document.getElementById('club').style.display = 'none';
   }
   doVideos() {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'none';
     document.getElementById('videos').style.display = 'block';
     document.getElementById('calendar').style.display = 'none';
-    /*document.getElementById('players').style.display = 'none';
-    document.getElementById('calendar').style.display = 'none';
-    document.getElementById('nobar').style.display = 'none';
-    document.getElementById('highlight').style.display = 'none';
-    document.getElementById('youtube').style.display = 'none';
-    document.getElementById('fanspage').style.display = 'none';*/
+    document.getElementById('club').style.display = 'none';
   }
   doCalendar() {
     document.getElementById('news').style.display = 'none';
     document.getElementById('photos').style.display = 'none';
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'block';
-    /*document.getElementById('players').style.display = 'none';
+    document.getElementById('club').style.display = 'none';
+  }
+  doClub() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
-    document.getElementById('nobar').style.display = 'none';
-    document.getElementById('highlight').style.display = 'none';
-    document.getElementById('youtube').style.display = 'none';
-    document.getElementById('fanspage').style.display = 'none';*/
+    document.getElementById('club').style.display = 'block';
   }
   doRefresh() {
     this.doGetNewsAll();
@@ -199,6 +199,7 @@ export class HomePage {
     this.doGetScheduleAll();
     this.doGetScheduleMonth();
     this.doGetScheduleDay();
+    this.doGetClub();
   }
   /******************************************NEWS*************************************************/
 
@@ -505,8 +506,8 @@ export class HomePage {
           text: 'OK',
           handler: () => {
             const headers = new HttpHeaders()
-            .set("Content-Type", "application/json");
-            this.api.delete('table/z_content_photos', { params: { limit: 1000, filter: "id=" + "'" + this.id + "'"  } })
+              .set("Content-Type", "application/json");
+            this.api.delete('table/z_content_photos', { params: { limit: 1000, filter: "id=" + "'" + this.id + "'" } })
               .subscribe(val => {
                 document.getElementById("myGallery").style.display = "none";
                 this.nextno = '';
@@ -793,7 +794,7 @@ export class HomePage {
         {
           "id": this.nextno,
           "title": this.myFormVideos.value.title,
-          "image_url_thumb" : this.myFormVideos.value.imageurlthumb,
+          "image_url_thumb": this.myFormVideos.value.imageurlthumb,
           "video_url": this.myFormVideos.value.videourl,
           "date": date,
           "status": 'VERIFIKASI',
@@ -956,8 +957,8 @@ export class HomePage {
     actionSheet.present();
   }
   /*************************************************************************************************/
-   /*******************************************SCHEDULE************************************************/
-   doGetScheduleAll() {
+  /*******************************************SCHEDULE************************************************/
+  doGetScheduleAll() {
     this.api.get('table/z_schedule', { params: { limit: 1000 } })
       .subscribe(val => {
         this.ScheduleAll = val['data'];
@@ -1000,6 +1001,13 @@ export class HomePage {
   doCloseAddSchedule() {
     document.getElementById("mySchedule").style.display = "none";
   }
+  onSelectClubHome(club) {
+    this.myFormSchedule.get('clubhomeicon').setValue(club.icon_url)
+    this.myFormSchedule.get('place').setValue(club.stadion)
+  }  
+  onSelectClubAway(club) {
+    this.myFormSchedule.get('clubawayicon').setValue(club.icon_url)
+  }
   getNextNoSchedule() {
     return this.api.get('nextno/z_schedule/id')
   }
@@ -1029,7 +1037,8 @@ export class HomePage {
           "day": day,
           "date": this.myFormSchedule.value.date,
           "time": this.myFormSchedule.value.time,
-          "status": 'VERIFIKASI',
+          "skor_home" : null,
+          "skor_away" : null,
           "uuid": this.uuid
         },
         { headers })
@@ -1189,5 +1198,65 @@ export class HomePage {
     actionSheet.present();
   }
   /*************************************************************************************************/
+  /**********************************************CLUB***********************************************/
 
+  doGetClub() {
+    this.api.get('table/z_club', { params: { limit: 100 } })
+      .subscribe(val => {
+        this.Clubs = val['data'];
+        this.TotalClubs = val['count']
+      });
+  }
+  doAddClub() {
+    document.getElementById("myClub").style.display = "block";
+    this.myFormClub.get('iconurl').setValue('http://101.255.60.202/webapi5/img/')
+  }
+  doCloseAddClub() {
+    document.getElementById("myClub").style.display = "none";
+    this.myFormClub.reset();
+  }
+  changename() {
+    this.myFormClub.get('iconurl').setValue('http://101.255.60.202/webapi5/img/' + this.myFormClub.value.clubname)
+  }
+  getNextNoClub() {
+    return this.api.get('nextno/z_club/id')
+  }
+  doSaveClub() {
+    this.getNextNoClub().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_club",
+        {
+          "id": this.nextno,
+          "name": this.myFormClub.value.clubname,
+          "alias": this.myFormClub.value.alias,
+          "nation": this.myFormClub.value.nation,
+          "stadion": this.myFormClub.value.stadion,
+          "icon_url": this.myFormClub.value.iconurl,
+          "date": date,
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormClub.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          // this.doCloseAddClub();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
+
+  /*************************************************************************************************/
 }

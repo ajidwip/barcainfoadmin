@@ -35,8 +35,8 @@
     <a padding (click)="doNobar()">
       <ion-icon name="md-football" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Nobar</ion-icon>
     </a>
-    <a padding (click)="doHighlight()">
-      <ion-icon name="md-rewind" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Highlight</ion-icon>
+    <a padding (click)="doClub()">
+      <ion-icon name="md-rewind" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Club</ion-icon>
     </a>
     <a padding (click)="doYoutube()">
       <ion-icon name="logo-youtube" style="font-size:18px;">&nbsp;&nbsp;&nbsp;Youtube Videos</ion-icon>
@@ -441,7 +441,12 @@
         <form [formGroup]="myFormSchedule">
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">League</ion-label>
-            <ion-input formControlName="league" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+            <ion-select formControlName="league" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="LA LIGA">LA LIGA</ion-option>
+              <ion-option value="LIGA CHAMPIONS">LIGA CHAMPIONS</ion-option>
+              <ion-option value="COPA DEL REY">COPA DEL REY</ion-option>
+              <ion-option value="PRA MUSIM">PRA MUSIM</ion-option>
+            </ion-select>
           </ion-item>
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Round</ion-label>
@@ -449,9 +454,8 @@
           </ion-item>
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Home</ion-label>
-            <ion-select formControlName="clubhome" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" (ionChange)="onSelectClubHome()">
-              <ion-option value="f">Female</ion-option>
-              <ion-option value="m">Male</ion-option>
+            <ion-select formControlName="clubhome" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="{{club.name}}" *ngFor="let club of Clubs" (ionSelect)="onSelectClubHome(club)">{{club.name}}</ion-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -460,9 +464,8 @@
           </ion-item>
           <ion-item>
             <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Away</ion-label>
-            <ion-select formControlName="clubaway" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" (ionChange)="onSelectClubAway()">
-              <ion-option value="f">Female</ion-option>
-              <ion-option value="m">Male</ion-option>
+            <ion-select formControlName="clubaway" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="{{club.name}}" *ngFor="let club of Clubs" (ionSelect)="onSelectClubAway(club)">{{club.name}}</ion-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -483,6 +486,80 @@
           </ion-item>
           <ion-buttons end padding>
             <button ion-button color="bluedark" (click)="doSaveSchedule();" [disabled]="!myFormSchedule.valid">Save</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
+
+    <div id="club" style="display: none;">
+      <ion-fab style="position: fixed;right: 30px;bottom:30px;" right bottom>
+        <button ion-fab color="bluedark" (click)="doAddClub()">
+          <ion-icon name="md-add"></ion-icon>
+        </button>
+      </ion-fab>
+      <ion-list>
+        <ion-searchbar [(ngModel)]="searchClub" (ionInput)="setSearchClub()"></ion-searchbar>
+        <ion-item no-lines style="border:1px solid;border-color:#dedede;">
+          <ion-label>Filter</ion-label>
+          <ion-select [(ngModel)]="club">
+            <ion-option value="SPAIN">Spain</ion-option>
+            <ion-option value="ENGLISH">English</ion-option>
+            <ion-option value="GERMAN">German</ion-option>
+            <ion-option value="FRANCE">France</ion-option>
+            <ion-option value="ITALIA">Italia</ion-option>
+            <ion-option value="NETHERLAND">Netherland</ion-option>
+            <ion-option value="PORTUGAL">Portugal</ion-option>
+          </ion-select>
+        </ion-item>
+        <ion-item no-lines style="border:1px solid;border-color:#dedede;" *ngFor="let club of Clubs">
+          <ion-thumbnail item-left>
+            <img src="{{club.icon_url}}" />
+          </ion-thumbnail>
+          <h1>{{club.alias}}</h1>
+          <p>{{club.name}}</p>
+          <p>{{club.nation}}</p>
+          <ion-note item-end>{{club.stadion}}</ion-note>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div id="myClub" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>ADD CLUB</b>
+          <span class="closeModal" (click)="doCloseAddClub()">&times;</span>
+        </div>
+        <form [formGroup]="myFormClub">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Nation</ion-label>
+            <ion-select formControlName="nation" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="SPAIN">Spain</ion-option>
+              <ion-option value="ENGLISH">English</ion-option>
+              <ion-option value="GERMAN">German</ion-option>
+              <ion-option value="FRANCE">France</ion-option>
+              <ion-option value="ITALIA">Italia</ion-option>
+              <ion-option value="NETHERLAND">Netherland</ion-option>
+              <ion-option value="PORTUGAL">Portugal</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Name</ion-label>
+            <ion-input formControlName="clubname" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" (ionChange)="changename()"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Alias</ion-label>
+            <ion-input formControlName="alias" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Stadion</ion-label>
+            <ion-input formControlName="stadion" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Icon URL</ion-label>
+            <ion-input formControlName="iconurl" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveClub();" [disabled]="!myFormClub.valid">Save</button>
           </ion-buttons>
         </form>
       </div>
