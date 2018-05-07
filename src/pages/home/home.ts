@@ -16,6 +16,8 @@ export class HomePage {
   myFormVideos: FormGroup;
   myFormSchedule: FormGroup;
   myFormClub: FormGroup;
+  myFormFansPage: FormGroup;
+  myFormPlayers: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -65,6 +67,12 @@ export class HomePage {
   public Clubs = [];
   public TotalClubs: any;
 
+  public FansPage = [];
+  public TotalFansPage: any;
+
+  public Players = [];
+  public TotalPlayers: any;
+
   public nextno: any;
   public uuid = '';
 
@@ -107,6 +115,21 @@ export class HomePage {
       stadion: ['', Validators.compose([Validators.required])],
       iconurl: ['', Validators.compose([Validators.required])]
     })
+    this.myFormFansPage = fb.group({
+      fanspage: ['', Validators.compose([Validators.required])],
+      name: ['', Validators.compose([Validators.required])],
+      alias: ['', Validators.compose([Validators.required])],
+      iconurl: ['', Validators.compose([Validators.required])],
+      pageurl: ['', Validators.compose([Validators.required])]
+    })
+    this.myFormPlayers = fb.group({
+      name: ['', Validators.compose([Validators.required])],
+      position: ['', Validators.compose([Validators.required])],
+      positiongroup: ['', Validators.compose([Validators.required])],
+      number: ['', Validators.compose([Validators.required])],
+      imgurl: ['', Validators.compose([Validators.required])],
+      season: ['', Validators.compose([Validators.required])]
+    })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
     this.doGetNewsAllNotActive();
@@ -137,6 +160,10 @@ export class HomePage {
     this.doGetScheduleDay();
 
     this.doGetClub();
+
+    this.doGetFansPage();
+
+    this.doGetPlayers();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
@@ -144,6 +171,8 @@ export class HomePage {
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
   }
   doPhotos() {
     document.getElementById('news').style.display = 'none';
@@ -151,6 +180,8 @@ export class HomePage {
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
   }
   doVideos() {
     document.getElementById('news').style.display = 'none';
@@ -158,6 +189,8 @@ export class HomePage {
     document.getElementById('videos').style.display = 'block';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
   }
   doCalendar() {
     document.getElementById('news').style.display = 'none';
@@ -165,6 +198,8 @@ export class HomePage {
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'block';
     document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
   }
   doClub() {
     document.getElementById('news').style.display = 'none';
@@ -172,6 +207,26 @@ export class HomePage {
     document.getElementById('videos').style.display = 'none';
     document.getElementById('calendar').style.display = 'none';
     document.getElementById('club').style.display = 'block';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
+  }
+  doFansPage() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'block';
+    document.getElementById('players').style.display = 'none';
+  }
+  doPlayers() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'block';
   }
   doRefresh() {
     this.doGetNewsAll();
@@ -199,6 +254,8 @@ export class HomePage {
     this.doGetScheduleMonth();
     this.doGetScheduleDay();
     this.doGetClub();
+    this.doGetFansPage();
+    this.doGetPlayers();
   }
   /******************************************NEWS*************************************************/
 
@@ -1032,6 +1089,7 @@ export class HomePage {
           "place": this.myFormSchedule.value.place,
           "date": this.myFormSchedule.value.date,
           "status": 'VERIFIKASI',
+          "info_live": 'LIVE STREAMING',
           "uuid": this.uuid
         },
         { headers })
@@ -1251,5 +1309,120 @@ export class HomePage {
     });
   }
 
+  /*************************************************************************************************/
+  /*******************************************FANS PAGE*********************************************/
+
+  doGetFansPage() {
+    this.api.get('table/z_fanspage', { params: { limit: 100 } })
+      .subscribe(val => {
+        this.FansPage = val['data'];
+        this.TotalFansPage = val['count']
+      });
+  }
+  doAddFansPage() {
+    document.getElementById("myFansPage").style.display = "block";
+  }
+  doCloseAddFansPage() {
+    document.getElementById("myFansPage").style.display = "none";
+    this.myFormFansPage.reset();
+  }
+  getNextNoFansPage() {
+    return this.api.get('nextno/z_fanspage/id')
+  }
+  doSaveFansPage() {
+    this.getNextNoFansPage().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_fanspage",
+        {
+          "id": this.nextno,
+          "fanspage": this.myFormFansPage.value.fanspage,
+          "name": this.myFormFansPage.value.name,
+          "alias": this.myFormFansPage.value.alias,
+          "icon_url": this.myFormFansPage.value.iconurl,
+          "page_url": this.myFormFansPage.value.pageurl,
+          "date": date,
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormFansPage.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseAddFansPage();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
+  /*************************************************************************************************/
+  /********************************************PLAYERS**********************************************/
+
+  doGetPlayers() {
+    this.api.get('table/z_players', { params: { limit: 100 } })
+      .subscribe(val => {
+        this.Players = val['data'];
+        this.TotalPlayers = val['count']
+      });
+  }
+  doAddPlayers() {
+    document.getElementById("myPlayers").style.display = "block";
+    this.myFormPlayers.get('season').setValue('2017-2018')
+  }
+  doCloseAddPlayers() {
+    document.getElementById("myPlayers").style.display = "none";
+    this.myFormPlayers.reset();
+  }
+  getNextNoPlayers() {
+    return this.api.get('nextno/z_players/id')
+  }
+  doSavePlayers() {
+    this.getNextNoPlayers().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_players",
+        {
+          "id": this.nextno,
+          "name": this.myFormPlayers.value.name,
+          "position": this.myFormPlayers.value.position,
+          "position_group": this.myFormPlayers.value.positiongroup,
+          "number": this.myFormPlayers.value.number,
+          "img_url": this.myFormPlayers.value.imgurl,
+          "season": this.myFormPlayers.value.season,
+          "status": 'OPEN',
+          "date": date,
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormPlayers.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseAddPlayers();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
   /*************************************************************************************************/
 }
