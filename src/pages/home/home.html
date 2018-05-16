@@ -44,6 +44,9 @@
     <a padding (click)="doFansPage()">
       <ion-icon name="logo-facebook" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Fans Page</ion-icon>
     </a>
+    <a padding (click)="doStreaming()">
+      <ion-icon name="md-videocam" style="font-size:20px;">&nbsp;&nbsp;&nbsp;Streaming</ion-icon>
+    </a>
   </div>
   <div class="main">
     <div id="news" style="display: none;">
@@ -448,6 +451,7 @@
               <ion-option value="Liga Champions">LIGA CHAMPIONS</ion-option>
               <ion-option value="Copa Del Rey">COPA DEL REY</ion-option>
               <ion-option value="Pra Musim">PRA MUSIM</ion-option>
+              <ion-option value="Persahabatan">PERSAHABATAN</ion-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -538,6 +542,7 @@
               <ion-option value="ITALIA">Italia</ion-option>
               <ion-option value="NETHERLAND">Netherland</ion-option>
               <ion-option value="PORTUGAL">Portugal</ion-option>
+              <ion-option value="LAINNYA">Lainnya</ion-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -672,6 +677,47 @@
           </ion-item>
           <ion-buttons end padding>
             <button ion-button color="bluedark" (click)="doSavePlayers();" [disabled]="!myFormPlayers.valid">Save</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
+
+    <div id="streaming" style="display: none;">
+      <ion-fab style="position: fixed;right: 30px;bottom:30px;" right bottom>
+        <button ion-fab color="bluedark" (click)="doAddStreaming()">
+          <ion-icon name="md-add"></ion-icon>
+        </button>
+      </ion-fab>
+      <ion-list>
+        <ion-item no-lines style="border:1px solid;border-color:#dedede;" *ngFor="let stream of Streaming" (click)="doUpdateStreaming(stream)">
+          <h1>{{stream.title}}</h1>
+          <p>{{stream.source}}</p>
+          <ion-note item-end>{{stream.status}}</ion-note>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div id="myStreaming" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>ADD STREAMING</b>
+          <span class="closeModal" (click)="doCloseAddStreaming()">&times;</span>
+        </div>
+        <form [formGroup]="myFormStreaming">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Title</ion-label>
+            <ion-input formControlName="title" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Thumbnail</ion-label>
+            <ion-input formControlName="thumbnail" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Source</ion-label>
+            <ion-input formControlName="source" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveStreaming();" [disabled]="!myFormStreaming.valid">Save</button>
           </ion-buttons>
         </form>
       </div>

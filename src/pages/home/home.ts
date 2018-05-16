@@ -18,6 +18,7 @@ export class HomePage {
   myFormClub: FormGroup;
   myFormFansPage: FormGroup;
   myFormPlayers: FormGroup;
+  myFormStreaming: FormGroup;
   public NewsAll = [];
   public TotalNewsAll: any;
   public NewsAllActive = [];
@@ -72,6 +73,9 @@ export class HomePage {
 
   public Players = [];
   public TotalPlayers: any;
+
+  public Streaming = [];
+  public TotalStreaming: any;
 
   public nextno: any;
   public uuid = '';
@@ -130,6 +134,11 @@ export class HomePage {
       imgurl: ['', Validators.compose([Validators.required])],
       season: ['', Validators.compose([Validators.required])]
     })
+    this.myFormStreaming = fb.group({
+      title: ['', Validators.compose([Validators.required])],
+      thumbnail: [''],
+      source: ['', Validators.compose([Validators.required])]
+    })
     this.doGetNewsAll();
     this.doGetNewsAllActive();
     this.doGetNewsAllNotActive();
@@ -164,6 +173,8 @@ export class HomePage {
     this.doGetFansPage();
 
     this.doGetPlayers();
+
+    this.doGetStreaming();
   }
   doNews() {
     document.getElementById('news').style.display = 'block';
@@ -173,6 +184,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doPhotos() {
     document.getElementById('news').style.display = 'none';
@@ -182,6 +194,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doVideos() {
     document.getElementById('news').style.display = 'none';
@@ -191,6 +204,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doCalendar() {
     document.getElementById('news').style.display = 'none';
@@ -200,6 +214,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doClub() {
     document.getElementById('news').style.display = 'none';
@@ -209,6 +224,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'block';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doFansPage() {
     document.getElementById('news').style.display = 'none';
@@ -218,6 +234,7 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'block';
     document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'none';
   }
   doPlayers() {
     document.getElementById('news').style.display = 'none';
@@ -227,6 +244,17 @@ export class HomePage {
     document.getElementById('club').style.display = 'none';
     document.getElementById('fanspage').style.display = 'none';
     document.getElementById('players').style.display = 'block';
+    document.getElementById('streaming').style.display = 'none';
+  }
+  doStreaming() {
+    document.getElementById('news').style.display = 'none';
+    document.getElementById('photos').style.display = 'none';
+    document.getElementById('videos').style.display = 'none';
+    document.getElementById('calendar').style.display = 'none';
+    document.getElementById('club').style.display = 'none';
+    document.getElementById('fanspage').style.display = 'none';
+    document.getElementById('players').style.display = 'none';
+    document.getElementById('streaming').style.display = 'block';
   }
   doRefresh() {
     this.doGetNewsAll();
@@ -256,6 +284,7 @@ export class HomePage {
     this.doGetClub();
     this.doGetFansPage();
     this.doGetPlayers();
+    this.doGetStreaming();
   }
   /******************************************NEWS*************************************************/
 
@@ -1060,7 +1089,7 @@ export class HomePage {
   onSelectClubHome(club) {
     this.myFormSchedule.get('clubhomeicon').setValue(club.icon_url)
     this.myFormSchedule.get('place').setValue(club.stadion)
-  }  
+  }
   onSelectClubAway(club) {
     this.myFormSchedule.get('clubawayicon').setValue(club.icon_url)
   }
@@ -1423,6 +1452,132 @@ export class HomePage {
           this.uuid = '';
         })
     });
+  }
+  /*************************************************************************************************/
+  /******************************************STREAMING********************************************/
+
+  doGetStreaming() {
+    this.api.get('table/z_streaming', { params: { limit: 1000 } })
+      .subscribe(val => {
+        this.Streaming = val['data'];
+        this.TotalStreaming = val['count']
+      });
+  }
+  doAddStreaming() {
+    document.getElementById("myStreaming").style.display = "block";
+    this.myFormStreaming.get('source').setValue('https://www.youtube.com/embed/')
+  }
+  doCloseAddStreaming() {
+    document.getElementById("myStreaming").style.display = "none";
+    this.myFormStreaming.reset();
+  }
+  getNextNoStreaming() {
+    return this.api.get('nextno/z_streaming/id')
+  }
+  doSaveStreaming() {
+    this.getNextNoStreaming().subscribe(val => {
+      this.nextno = val['nextno'];
+      let uuid = UUID.UUID();
+      this.uuid = uuid;
+      let date = moment().format('YYYY-MM-DD h:mm:ss');
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+
+      this.api.post("table/z_streaming",
+        {
+          "id": this.nextno,
+          "title": this.myFormStreaming.value.title,
+          "thumbnail": this.myFormStreaming.value.thumbnail,
+          "source": this.myFormStreaming.value.source,
+          "status": 'VERIFIKASI',
+          "date": date,
+          "uuid": this.uuid
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormStreaming.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Save Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseAddStreaming();
+          this.doRefresh();
+          this.nextno = '';
+          this.uuid = '';
+        })
+    });
+  }
+  doUpdateStreaming(stream) {
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'TOOLS',
+      buttons: [
+        {
+          text: 'VIEW',
+          icon: 'md-eye',
+          handler: () => {
+          }
+        },
+        {
+          text: 'UPDATE OPEN',
+          icon: 'md-open',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_streaming",
+              {
+                "id": stream.id,
+                "status": 'OPEN'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'UPDATE CLSD',
+          icon: 'md-hand',
+          handler: () => {
+            const headers = new HttpHeaders()
+              .set("Content-Type", "application/json");
+
+            this.api.put("table/z_streaming",
+              {
+                "id": stream.id,
+                "status": 'CLSD'
+              },
+              { headers })
+              .subscribe(val => {
+                let alert = this.alertCtrl.create({
+                  title: 'Sukses',
+                  subTitle: 'Update Sukses',
+                  buttons: ['OK']
+                });
+                alert.present();
+                this.doRefresh();
+              });
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'md-close',
+          handler: () => {
+          }
+        }
+      ]
+    });
+
+    actionSheet.present();
   }
   /*************************************************************************************************/
 }
