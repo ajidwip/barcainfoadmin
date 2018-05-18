@@ -493,6 +493,66 @@
       </div>
     </div>
 
+    <div id="myScheduleUpdate" class="modal">
+      <div class="modal-content">
+        <div>
+          <b>UPDATE JADWAL</b>
+          <span class="closeModal" (click)="doCloseUpdateSchedule()">&times;</span>
+        </div>
+        <form [formGroup]="myFormScheduleUpdate">
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">League</ion-label>
+            <ion-select formControlName="league" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="La Liga">LA LIGA</ion-option>
+              <ion-option value="Liga Champions">LIGA CHAMPIONS</ion-option>
+              <ion-option value="Copa Del Rey">COPA DEL REY</ion-option>
+              <ion-option value="Pra Musim">PRA MUSIM</ion-option>
+              <ion-option value="Persahabatan">PERSAHABATAN</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Round</ion-label>
+            <ion-input formControlName="round" style="border:1px solid;border-color:#eeeeee;padding-left:5px;" type="text"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Home</ion-label>
+            <ion-select formControlName="clubhome" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="{{club.name}}" *ngFor="let club of Clubs" (ionSelect)="onSelectClubHomeUpdate(club)">{{club.name}}</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Home Icon</ion-label>
+            <ion-input disabled formControlName="clubhomeicon" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Away</ion-label>
+            <ion-select formControlName="clubaway" style="border:1px solid;border-color:#eeeeee;padding-left:5px;">
+              <ion-option value="{{club.name}}" *ngFor="let club of Clubs" (ionSelect)="onSelectClubAwayUpdate(club)">{{club.name}}</ion-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Club Away Icon</ion-label>
+            <ion-input disabled formControlName="clubawayicon" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Place</ion-label>
+            <ion-input formControlName="place" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Date</ion-label>
+            <ion-datetime displayFormat="DD/MMMM/YYYY HH:mm" formControlName="date" min="2018" max="2020-10-31" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-datetime>
+          </ion-item>
+          <ion-item>
+            <ion-label stacked style="font-weight:bold;margin-bottom:5px;">Link Streaming</ion-label>
+            <ion-input formControlName="linkstreaming" type="text" style="border:1px solid;border-color:#eeeeee;padding-left:5px;"></ion-input>
+          </ion-item>
+          <ion-buttons end padding>
+            <button ion-button color="bluedark" (click)="doSaveUpdateSchedule();" [disabled]="!myFormScheduleUpdate.valid">Update</button>
+          </ion-buttons>
+        </form>
+      </div>
+    </div>
+
     <div id="club" style="display: none;">
       <ion-fab style="position: fixed;right: 30px;bottom:30px;" right bottom>
         <button ion-fab color="bluedark" (click)="doAddClub()">

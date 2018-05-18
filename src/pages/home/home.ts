@@ -15,6 +15,7 @@ export class HomePage {
   myFormGallery: FormGroup;
   myFormVideos: FormGroup;
   myFormSchedule: FormGroup;
+  myFormScheduleUpdate: FormGroup;
   myFormClub: FormGroup;
   myFormFansPage: FormGroup;
   myFormPlayers: FormGroup;
@@ -111,6 +112,17 @@ export class HomePage {
       clubawayicon: ['', Validators.compose([Validators.required])],
       place: ['', Validators.compose([Validators.required])],
       date: ['', Validators.compose([Validators.required])]
+    })
+    this.myFormScheduleUpdate = fb.group({
+      league: ['', Validators.compose([Validators.required])],
+      round: ['', Validators.compose([Validators.required])],
+      clubhome: ['', Validators.compose([Validators.required])],
+      clubhomeicon: ['', Validators.compose([Validators.required])],
+      clubaway: ['', Validators.compose([Validators.required])],
+      clubawayicon: ['', Validators.compose([Validators.required])],
+      place: ['', Validators.compose([Validators.required])],
+      date: ['', Validators.compose([Validators.required])],
+      linkstreaming: ['', Validators.compose([Validators.required])]
     })
     this.myFormClub = fb.group({
       nation: ['', Validators.compose([Validators.required])],
@@ -1044,21 +1056,21 @@ export class HomePage {
   /*************************************************************************************************/
   /*******************************************SCHEDULE************************************************/
   doGetScheduleAll() {
-    this.api.get('table/z_schedule', { params: { limit: 1000 } })
+    this.api.get('table/z_schedule', { params: { limit: 1000, sort: "date" + " ASC " } })
       .subscribe(val => {
         this.ScheduleAll = val['data'];
         this.TotalScheduleAll = val['count']
       });
   }
   doGetScheduleAllActive() {
-    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status='OPEN'" } })
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status='OPEN'", sort: "date" + " ASC " } })
       .subscribe(val => {
         this.ScheduleAllActive = val['data'];
         this.TotalScheduleAllActive = val['count']
       });
   }
   doGetScheduleAllNotActive() {
-    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status!='OPEN'" } })
+    this.api.get('table/z_schedule', { params: { limit: 1000, filter: "status!='OPEN'", sort: "date" + " ASC " } })
       .subscribe(val => {
         this.ScheduleAllNotActive = val['data'];
         this.TotalScheduleAllNotActive = val['count']
@@ -1207,14 +1219,25 @@ export class HomePage {
 
     actionSheet.present();
   }
-  doUpdateStatusScheduleActive(scheduleday) {
+  doUpdateStatusScheduleActive(scheduleall) {
     let actionSheet = this.actionSheetCtrl.create({
       title: 'TOOLS',
       buttons: [
         {
-          text: 'VIEW',
+          text: 'UPDATE',
           icon: 'md-eye',
           handler: () => {
+            this.id = scheduleall.id
+            this.myFormScheduleUpdate.get('league').setValue(scheduleall.league)
+            this.myFormScheduleUpdate.get('round').setValue(scheduleall.round)
+            this.myFormScheduleUpdate.get('clubhome').setValue(scheduleall.club_home)
+            this.myFormScheduleUpdate.get('clubhomeicon').setValue(scheduleall.club_home_icon_url)
+            this.myFormScheduleUpdate.get('clubaway').setValue(scheduleall.club_away)
+            this.myFormScheduleUpdate.get('clubawayicon').setValue(scheduleall.club_away_icon_url)
+            this.myFormScheduleUpdate.get('place').setValue(scheduleall.place)
+            this.myFormScheduleUpdate.get('date').setValue(scheduleall.date)
+            this.myFormScheduleUpdate.get('linkstreaming').setValue(scheduleall.link_streaming)
+            this.doUpdateSchedule();
           }
         },
         {
@@ -1226,7 +1249,7 @@ export class HomePage {
 
             this.api.put("table/z_schedule",
               {
-                "id": scheduleday.id,
+                "id": scheduleall.id,
                 "status": 'OPEN'
               },
               { headers })
@@ -1250,7 +1273,7 @@ export class HomePage {
 
             this.api.put("table/z_schedule",
               {
-                "id": scheduleday.id,
+                "id": scheduleall.id,
                 "status": 'CLSD'
               },
               { headers })
@@ -1276,6 +1299,50 @@ export class HomePage {
     });
 
     actionSheet.present();
+  }
+  doUpdateSchedule() {
+    document.getElementById("myScheduleUpdate").style.display = "block";
+  }
+  doCloseUpdateSchedule() {
+    document.getElementById("myScheduleUpdate").style.display = "none";
+  }
+  onSelectClubHomeUpdate(club) {
+    this.myFormScheduleUpdate.get('clubhomeicon').setValue(club.icon_url)
+    this.myFormScheduleUpdate.get('place').setValue(club.stadion)
+  }
+  onSelectClubAwayUpdate(club) {
+    this.myFormScheduleUpdate.get('clubawayicon').setValue(club.icon_url)
+  }
+  doSaveUpdateSchedule() {
+      const headers = new HttpHeaders()
+        .set("Content-Type", "application/json");
+      this.api.put("table/z_schedule",
+        {
+          "id": this.id,
+          "league": this.myFormScheduleUpdate.value.league,
+          "round": this.myFormScheduleUpdate.value.round,
+          "club_home": this.myFormScheduleUpdate.value.clubhome,
+          "club_home_icon_url": this.myFormScheduleUpdate.value.clubhomeicon,
+          "club_away": this.myFormScheduleUpdate.value.clubaway,
+          "club_away_icon_url": this.myFormScheduleUpdate.value.clubawayicon,
+          "place": this.myFormScheduleUpdate.value.place,
+          "date": this.myFormScheduleUpdate.value.date,
+          "link_streaming": this.myFormScheduleUpdate.value.linkstreaming,
+          "info_live": 'LIVE STREAMING',
+        },
+        { headers })
+        .subscribe(val => {
+          this.myFormScheduleUpdate.reset();
+          let alert = this.alertCtrl.create({
+            title: 'Sukses',
+            subTitle: 'Update Sukses',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.doCloseUpdateSchedule();
+          this.doRefresh();
+          this.id = '';
+        })
   }
   /*************************************************************************************************/
   /**********************************************CLUB***********************************************/
